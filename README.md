@@ -15,4 +15,8 @@ et CSS qui produit le résultat — sans jargon, tout en français.
 - Effets visuels (box-shadow, transition, transform…)
 
 ## Voir en ligne
-👉 
+👉 https://virgile-fr.github.io/css-visuel/
+
+## Licence
+© [Virgile Arlaud] — [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
+Utilisation non commerciale uniquement.
