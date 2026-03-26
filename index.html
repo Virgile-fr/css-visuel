@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Visuel — Guide débutant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kulim+Park:wght@200;300;400;600;700&family=Krona+One&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+
+    /* ══════════════════════════════════════════
+       SYSTÈME DE COULEURS — calqué sur la DA
+    ══════════════════════════════════════════ */
+    :root {
+      --radius:    14px;
+      --base-font: "Kulim Park", system-ui, sans-serif;
+      --html-bg:   #0d0d0d;
+      --css-bg:    #080808;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg:        #f0ebe0;
+        --surface:   #e6e0d4;
+        --text:      #0d0d0d;
+        --muted:     rgba(0,0,0,.42);
+        --border-c:  rgba(0,0,0,.13);
+        --card-bg:   rgba(0,0,0,.03);
+        --header-bg: rgba(0,0,0,.055);
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:        #0d0d0d;
+        --surface:   #1a1a1a;
+        --text:      #f0d1b4;
+        --muted:     rgba(240,209,180,.4);
+        --border-c:  rgba(240,209,180,.15);
+        --card-bg:   rgba(240,209,180,.03);
+        --header-bg: rgba(240,209,180,.07);
+      }
+    }
+    :root { --border: 1px solid var(--border-c); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--base-font);
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 15px; line-height: 1.6;
+      animation: appear .4s;
+      transition: background-color .2s ease-in-out, color .2s ease-in-out;
+    }
+    @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+
+    a, a:hover, a:active, a:focus { text-decoration: none; color: inherit; }
+
+    h1, h2, h3, h4, h5, h6, p { margin: 0; }
+    h1, h2, h3 { font-family: "Krona One", sans-serif; }
+
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── NAV ─────────────────────────────── */
+    nav {
+      width: 204px; flex-shrink: 0;
+      position: sticky; top: 0; height: 100vh;
+      overflow-y: auto; padding: 32px 16px;
+      border-right: var(--border);
+      background: var(--bg);
+    }
+    .nav-logo {
+      font-family: "Krona One", sans-serif;
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      display: block; margin-bottom: 28px;
+      opacity: .9;
+    }
+    nav ul { list-style: none; }
+    nav li { margin-bottom: 2px; }
+    nav a {
+      font-family: var(--base-font);
+      font-size: 13px; font-weight: 400;
+      display: block; padding: 5px 10px;
+      border-radius: var(--radius);
+      color: var(--muted);
+      transition: color .15s, background .15s;
+    }
+    nav a:hover { color: var(--text); background: var(--header-bg); }
+    nav a.active {
+      color: var(--bg);
+      background: var(--text);
+    }
+    .nav-group {
+      font-family: "Krona One", sans-serif;
+      font-size: 8.5px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--muted);
+      margin: 18px 0 5px 10px;
+    }
+
+    /* ── MAIN ────────────────────────────── */
+    main { flex: 1; padding: 56px 60px; max-width: 1000px; }
+
+    .page-header { margin-bottom: 56px; }
+    .page-header h1 {
+      font-size: 56px; line-height: .95;
+      letter-spacing: -.02em; margin-bottom: 20px;
+      font-weight: 400; /* Krona One n'a qu'une graisse */
+    }
+    .page-header p {
+      color: var(--muted); font-size: 14.5px;
+      max-width: 520px; line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* ── INTRO BOX ───────────────────────── */
+    .intro-box {
+      border: var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px; margin-bottom: 52px;
+    }
+    .intro-box h2 {
+      font-family: "Krona One", sans-serif;
+      font-size: 13px; font-weight: 400;
+      margin-bottom: 14px; letter-spacing: .02em;
+    }
+    .intro-schema {
+      display: flex; border-radius: calc(var(--radius) - 4px); overflow: hidden;
+      border: var(--border);
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+    }
+    .intro-html { background: var(--html-bg); padding: 18px 22px; flex: 1; line-height: 1.8; color: #e8e8f0; }
+    .intro-css  { background: var(--css-bg);  padding: 18px 22px; flex: 1; line-height: 1.8; color: #e2dff7; border-left: 1px solid rgba(255,255,255,.07); }
+    .code-label {
+      font-family: "Krona One", sans-serif;
+      font-size: 8px; letter-spacing: .22em; text-transform: uppercase;
+      margin-bottom: 10px; display: block;
+    }
+    .label-html { color: #f38ba8; }
+    .label-css  { color: #cba6f7; }
+    .intro-note { margin-top: 16px; font-size: 13px; color: var(--muted); line-height: 1.7; font-weight: 300; }
+    .intro-note strong { color: var(--text); font-weight: 600; }
+
+    /* ── SECTION ─────────────────────────── */
+    section { margin-bottom: 72px; }
+    .section-title {
+      font-family: "Krona One", sans-serif;
+      font-weight: 400; font-size: 18px;
+      margin-bottom: 20px; padding-bottom: 14px;
+      border-bottom: var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-title .num {
+      background: var(--text); color: var(--bg);
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      padding: 3px 8px; border-radius: calc(var(--radius) / 2);
+      letter-spacing: .06em;
+    }
+    .section-intro {
+      color: var(--muted); font-size: 13.5px;
+      margin-top: -8px; margin-bottom: 20px; line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── PROP CARD ───────────────────────── */
+    .prop {
+      margin-bottom: 16px;
+      border: var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .prop-header {
+      padding: 10px 18px;
+      background: var(--header-bg);
+      border-bottom: var(--border);
+      display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+    }
+    code.pn {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+      color: var(--text);
+      background: var(--header-bg);
+      padding: 2px 8px; border-radius: calc(var(--radius) / 3);
+      font-weight: 500;
+    }
+    .pd { font-size: 13px; color: var(--muted); font-weight: 300; }
+
+    .prop-body {
+      display: grid; grid-template-columns: 1fr 1fr;
+    }
+    .prop-demo {
+      grid-column: 1 / -1;
+      padding: 20px 22px; border-bottom: var(--border);
+      display: flex; flex-direction: column; gap: 10px;
+      justify-content: center; min-height: 110px;
+      background: var(--card-bg);
+    }
+
+    pre.code-html,
+    pre.code-css {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+      line-height: 1.75; padding: 18px 20px; overflow-x: auto; margin: 0;
+    }
+    pre.code-html {
+      background: var(--html-bg); color: #e8e8f0;
+      border-right: 1px solid rgba(255,255,255,.06);
+    }
+    pre.code-css {
+      background: var(--css-bg); color: #e2dff7;
+    }
+    pre.code-html::before {
+      content: 'HTML'; display: block;
+      font-family: "Krona One", sans-serif; font-size: 8px;
+      letter-spacing: .22em; color: #f38ba8; margin-bottom: 8px;
+    }
+    pre.code-css::before {
+      content: 'CSS'; display: block;
+      font-family: "Krona One", sans-serif; font-size: 8px;
+      letter-spacing: .22em; color: #cba6f7; margin-bottom: 8px;
+    }
+
+    /* syntax colors */
+    .t  { color: #f38ba8; }
+    .a  { color: #89b4fa; }
+    .s  { color: #f9e2af; }
+    .pr { color: #89dceb; }
+    .vl { color: #a6e3a1; }
+    .sl { color: #f38ba8; }
+    .cm { color: #4a4a5e; font-style: italic; }
+
+    /* helper label */
+    .lbl {
+      font-size: 10.5px; color: var(--muted);
+      font-family: 'JetBrains Mono', monospace; margin-bottom: 3px;
+    }
+    .demo-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+    .demo-col  { display: flex; flex-direction: column; gap: 4px; }
+
+    /* box model schema */
+    .bm     { background: #fde8c8; padding: 12px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #7c4a1a; display: inline-flex; flex-direction: column; align-items: center; gap: 2px; }
+    .bm-b   { background: #fbbf24; padding: 8px; }
+    .bm-p   { background: #bbf7d0; padding: 10px; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #166534; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .bm-c   { background: #dbeafe; padding: 10px 18px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #1e40af; text-align: center; }
+    .bm-tag { font-size: 9px; opacity: .7; text-align: center; }
+
+    @media (max-width: 860px) {
+      nav { display: none; }
+      main { padding: 28px 18px; }
+      .page-header h1 { font-size: 34px; }
+      .prop-body { grid-template-columns: 1fr; }
+      .intro-schema { flex-direction: column; }
+      .demo-row { gap: 12px; }
+      .avec-wrap { width: 100%; }
+      pre.code-html { border-right: none; border-bottom: 1px solid rgba(255,255,255,.06); }
+    }
+
+
+    /* ══════════════════════════════════════════
+       CLASSES DÉMO
+       Ces classes sont exactement celles montrées
+       dans les panneaux de code.
+    ══════════════════════════════════════════ */
+
+    /* --- 01 COLOR --- */
+    .rouge  { color: #e63946; font-size: 15px; }
+    .bleu   { color: #3b82f6; font-size: 15px; }
+    .vert   { color: #22c55e; font-size: 15px; }
+
+    /* --- 01 FONT-SIZE --- */
+    .petit       { font-size: 12px; }
+    .corps       { font-size: 16px; }
+    .sous-titre  { font-size: 24px; }
+    .grand-titre { font-size: 40px; font-weight: 800; line-height: 1; }
+
+    /* --- 01 FONT-WEIGHT --- */
+    .fin        { font-weight: 300; font-size: 17px; }
+    .normal-w   { font-weight: 400; font-size: 17px; }
+    .semi-gras  { font-weight: 600; font-size: 17px; }
+    .gras       { font-weight: 800; font-size: 17px; }
+
+    /* --- 01 FONT-FAMILY --- */
+    .police-sans  { font-family: Arial, sans-serif;               font-size: 16px; }
+    .police-serif { font-family: Georgia, serif;                  font-size: 16px; }
+    .police-mono  { font-family: 'JetBrains Mono', monospace;     font-size: 14px; }
+
+    /* --- 01 TEXT-ALIGN --- */
+    .aligne-gauche { text-align: left;   font-size: 13px; border: var(--border); padding: 6px 10px; border-radius: 6px; display: block; }
+    .aligne-centre { text-align: center; font-size: 13px; border: var(--border); padding: 6px 10px; border-radius: 6px; display: block; }
+    .aligne-droite { text-align: right;  font-size: 13px; border: var(--border); padding: 6px 10px; border-radius: 6px; display: block; }
+
+    /* --- 01 LINE-HEIGHT --- */
+    .interligne-serre  { line-height: 1.1; font-size: 13px; border: var(--border); padding: 8px; border-radius: 6px; max-width: 120px; }
+    .interligne-normal { line-height: 1.6; font-size: 13px; border: var(--border); padding: 8px; border-radius: 6px; max-width: 120px; }
+    .interligne-large  { line-height: 2.2; font-size: 13px; border: var(--border); padding: 8px; border-radius: 6px; max-width: 120px; }
+
+    /* --- 01 LETTER-SPACING --- */
+    .tracking-serre { letter-spacing: -0.03em; font-size: 15px; }
+    .tracking-large { letter-spacing:  0.12em; font-size: 15px; }
+    .tracking-caps  { letter-spacing:  0.25em; font-size: 13px; text-transform: uppercase; font-weight: 600; }
+
+    /* --- 01 TEXT-DECORATION --- */
+    .souligne   { text-decoration: underline;    font-size: 15px; }
+    .barre      { text-decoration: line-through; font-size: 15px; }
+    .lien-propre{ text-decoration: none; color: #3b82f6; font-size: 15px; }
+
+    /* --- 02 MARGIN / PADDING --- */
+    .carte {
+      border: 2px solid var(--text);
+      padding: 16px;
+      background: rgba(59,130,246,.08);
+      font-size: 13px;
+    }
+    .btn-pad {
+      display: inline-block;
+      padding: 8px 24px;
+      background: #3b82f6; color: white;
+      border-radius: 4px; font-size: 13px;
+    }
+    .centree {
+      width: 140px;
+      margin: 0 auto;
+      background: #fef9c3;
+      border: 2px solid #eab308;
+      padding: 8px;
+      border-radius: 6px; font-size: 12px;
+      text-align: center; color: #713f12;
+    }
+
+    /* --- 02 WIDTH --- */
+    .largeur-fixe   { width: 80px;  height: 28px; background: #dbeafe; border: 2px solid #3b82f6; border-radius: 4px; }
+    .largeur-moitie { width: 50%;   height: 28px; background: #dbeafe; border: 2px solid #3b82f6; border-radius: 4px; }
+    .largeur-pleine { width: 100%;  height: 28px; background: #dbeafe; border: 2px solid #3b82f6; border-radius: 4px; }
+
+    /* --- 02 BORDER --- */
+    .bord-solid   { border: 2px solid var(--text); padding: 8px 12px; border-radius: 4px; font-size: 13px; display: inline-block; }
+    .bord-tirets  { border: 2px dashed #3b82f6; padding: 8px 12px; border-radius: 4px; font-size: 13px; display: inline-block; }
+    .bord-points  { border: 2px dotted #e91e63; padding: 8px 12px; border-radius: 4px; font-size: 13px; display: inline-block; }
+    .bord-dessous { border-bottom: 3px solid #c95c22; padding: 8px 12px; font-size: 13px; display: inline-block; }
+
+    /* --- 02 BORDER-RADIUS --- */
+    .coins-carres { width: 56px; height: 56px; background: #3b82f6; border-radius: 0; }
+    .coins-ronds  { width: 56px; height: 56px; background: #3b82f6; border-radius: 14px; }
+    .cercle       { width: 56px; height: 56px; background: #3b82f6; border-radius: 50%; }
+    .pilule       { width: 84px; height: 36px; background: #3b82f6; border-radius: 999px; }
+
+    /* --- 02 BOX-SIZING demo uniquement --- */
+    .piege   { width: 130px; background: #fce4ec; border: 8px solid #e91e63; padding: 10px; font-size: 11px; font-family: 'JetBrains Mono', monospace; box-sizing: content-box; color: #1a1a1a; line-height: 1.5; }
+    .correct { width: 130px; background: #dcfce7; border: 8px solid #22c55e; padding: 10px; font-size: 11px; font-family: 'JetBrains Mono', monospace; box-sizing: border-box; color: #1a1a1a; line-height: 1.5; }
+
+    /* --- 03 BACKGROUND-COLOR --- */
+    .fond-bleu { background-color: #3b82f6; }
+    .fond-rose { background-color: #e91e63; }
+    .fond-semi { background-color: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; }
+    /* helpers pour rendre ces boîtes visibles */
+    .fond-bleu, .fond-rose, .fond-semi {
+      width: 80px; height: 50px; border-radius: 6px;
+      display: inline-block;
+    }
+
+    /* --- 03 GRADIENT --- */
+    .degrade-1 { background: linear-gradient(to right, #3b82f6, #e91e63); }
+    .degrade-2 { background: linear-gradient(135deg, #f9e2af, #c95c22); }
+    .degrade-3 { background: radial-gradient(circle, #93c5fd, #1e3a8a); }
+    .degrade-1, .degrade-2, .degrade-3 {
+      width: 80px; height: 80px; border-radius: 6px; display: inline-block;
+    }
+
+    /* --- 03 BACKGROUND-IMAGE --- */
+    .hero {
+      background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 80px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 600; font-size: 14px;
+      text-shadow: 0 1px 4px rgba(0,0,0,.6);
+    }
+    /* fallback si l'image ne charge pas */
+    .hero-fallback {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      height: 80px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 600; font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* --- 03 OPACITY --- */
+    .opaque     { opacity: 1;   }
+    .mi-opaque  { opacity: 0.5; }
+    .peu-opaque { opacity: 0.2; }
+    .opaque, .mi-opaque, .peu-opaque {
+      background: #3b82f6; color: white;
+      padding: 8px 14px; border-radius: 5px;
+      font-size: 13px; font-family: 'JetBrains Mono', monospace;
+      display: inline-block;
+    }
+
+    /* --- 04 DISPLAY --- */
+    .el-block {
+      display: block;
+      background: #dbeafe; border: 1px solid #3b82f6; color: #1e3a8a;
+      padding: 6px 10px; border-radius: 6px;
+      font-size: 12px; font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+    .el-inline {
+      display: inline;
+      background: #fef9c3; padding: 2px 5px; color: #713f12;
+      border-radius: 4px; border: 1px solid #eab308;
+    }
+    .el-inline-block {
+      display: inline-block;
+      background: #dcfce7; border: 1px solid #22c55e; color: #166534;
+      padding: 6px 14px; border-radius: 6px;
+      font-size: 13px; margin-right: 4px;
+    }
+
+    /* --- 05 POSITION --- */
+    .parent-relatif {
+      position: relative;
+      height: 110px;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px dashed var(--border-c);
+    }
+    .enfant-relatif {
+      position: relative;
+      top: 8px; left: 8px;
+      display: inline-block;
+      background: #dbeafe; border: 1px solid #3b82f6; color: #1e3a8a;
+      padding: 5px 8px; border-radius: 4px;
+      font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    }
+    .enfant-absolu {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      background: #fce7f3; border: 1px solid #e91e63; color: #9d174d;
+      padding: 5px 8px; border-radius: 4px;
+      font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* --- 06 FLEXBOX - conteneur --- */
+    .conteneur-flex {
+      display: flex;
+      background: var(--surface);
+      border: 1px dashed var(--border-c);
+      border-radius: 8px;
+      padding: 10px;
+      gap: 8px;
+    }
+
+    /* --- 06 JUSTIFY-CONTENT --- */
+    .jc-debut  { display: flex; justify-content: flex-start;   gap: 6px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; min-height: 48px; }
+    .jc-milieu { display: flex; justify-content: center;       gap: 6px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; min-height: 48px; }
+    .jc-fin    { display: flex; justify-content: flex-end;     gap: 6px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; min-height: 48px; }
+    .jc-entre  { display: flex; justify-content: space-between;          background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; min-height: 48px; }
+    .jc-egal   { display: flex; justify-content: space-evenly;           background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; min-height: 48px; }
+
+    /* --- 06 ALIGN-ITEMS --- */
+    .ai-haut   { display: flex; align-items: flex-start; height: 80px; gap: 6px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; }
+    .ai-milieu { display: flex; align-items: center;     height: 80px; gap: 6px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; }
+    .ai-bas    { display: flex; align-items: flex-end;   height: 80px; gap: 6px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; }
+
+    /* --- 06 GAP + FLEX-WRAP --- */
+    .avec-gap  { display: flex; gap: 16px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; }
+    .avec-wrap { display: flex; flex-wrap: wrap; gap: 8px; width: 160px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; }
+
+    /* --- 06 FLEX:1 enfants --- */
+    .conteneur-parts { display: flex; gap: 6px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; }
+
+    /* --- 06 FLEX-DIRECTION --- */
+    .flex-rangee  { display: flex; flex-direction: row;    gap: 6px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; }
+    .flex-colonne { display: flex; flex-direction: column; gap: 6px; width: 80px; background: var(--surface); border: 1px dashed var(--border-c); border-radius: 8px; padding: 10px; }
+
+    /* enfants flex réutilisés partout */
+    .enfant-a { background: #3b82f6; color: white; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+    .enfant-b { background: #e91e63; color: white; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+    .enfant-c { background: #22c55e; color: white; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+    .fi       { background: #3b82f6; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+    .fi-court { background: #3b82f6; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+    .fi-grand { background: #e91e63; color: white; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono', monospace; min-height: 52px; display: flex; align-items: center; }
+    .part-2   { flex: 2; background: #3b82f6; color: white; padding: 8px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono', monospace; text-align: center; }
+    .part-1   { flex: 1; background: #e91e63; color: white; padding: 8px; border-radius: 6px; font-size: 12px; font-family: 'JetBrains Mono', monospace; text-align: center; }
+
+    /* --- 07 BOX-SHADOW --- */
+    .ombre-legere  { box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+    .ombre-carte   { box-shadow: 0 4px 16px rgba(0,0,0,.18); }
+    .ombre-coloree { box-shadow: 0 4px 20px rgba(59,130,246,.6); background: #3b82f6 !important; color: white !important; }
+    .ombre-legere, .ombre-carte, .ombre-coloree {
+      width: 64px; height: 64px; background: #f5f0e8;
+      border-radius: 8px; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 10px; font-family: 'JetBrains Mono', monospace;
+      color: #555; text-align: center; line-height: 1.3;
+    }
+
+    /* --- 07 CURSOR --- */
+    .curseur-main     { cursor: pointer;     background: #dbeafe; color: #1e3a8a; padding: 8px 12px; border-radius: 6px; font-size: 12px; border: 1px solid #3b82f6; font-family: 'JetBrains Mono', monospace; display: inline-block; }
+    .curseur-interdit { cursor: not-allowed; background: #fce7f3; color: #9d174d; padding: 8px 12px; border-radius: 6px; font-size: 12px; border: 1px solid #e91e63; font-family: 'JetBrains Mono', monospace; display: inline-block; }
+    .curseur-texte    { cursor: text;        background: #dcfce7; color: #166534; padding: 8px 12px; border-radius: 6px; font-size: 12px; border: 1px solid #22c55e; font-family: 'JetBrains Mono', monospace; display: inline-block; }
+
+    /* --- 07 TRANSITION --- */
+    .btn-base {
+      padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;
+      font-size: 13px; font-weight: 500; background: #3b82f6; color: white;
+    }
+    .btn-base:hover { background: #e91e63; transform: scale(1.06); }
+
+    .btn-anime {
+      padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer;
+      font-size: 13px; font-weight: 500; background: #3b82f6; color: white;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .btn-anime:hover { background: #e91e63; transform: scale(1.06); }
+
+    /* --- 07 TRANSFORM --- */
+    .boite-base     { width: 52px; height: 52px; background: #3b82f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; font-family: 'JetBrains Mono', monospace; }
+    .zoom           { transform: scale(1.4); }
+    .rotation       { transform: rotate(20deg); }
+    .decalage       { transform: translateY(-16px); }
+    .inclinaison    { transform: skewX(18deg); }
+    .zoom, .rotation, .decalage, .inclinaison {
+      width: 52px; height: 52px; background: #3b82f6; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: white; font-family: 'JetBrains Mono', monospace;
+    }
+
+  </style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ════════ NAV ════════ -->
+<nav>
+  <span class="nav-logo">CSS Visuel</span>
+  <ul>
+    <li class="nav-group">Bases</li>
+    <li><a href="#intro">HTML + CSS</a></li>
+    <li class="nav-group">Texte</li>
+    <li><a href="#typo">Typographie</a></li>
+    <li class="nav-group">Boîte</li>
+    <li><a href="#boxmodel">Box Model</a></li>
+    <li><a href="#bg">Fonds</a></li>
+    <li class="nav-group">Mise en page</li>
+    <li><a href="#display">Display</a></li>
+    <li><a href="#position">Position</a></li>
+    <li><a href="#flexbox">Flexbox</a></li>
+    <li class="nav-group">Finitions</li>
+    <li><a href="#effets">Effets</a></li>
+  </ul>
+</nav>
+
+<!-- ════════ MAIN ════════ -->
+<main>
+
+  <div class="page-header">
+    <h1>Référence<br>CSS Visuelle</h1>
+    <p>Chaque propriété CSS est montrée en action. Le résultat affiché est produit exactement par le code HTML et CSS montré à côté — ni plus, ni moins.</p>
+  </div>
+
+
+  <!-- ────────── 00 INTRO ────────── -->
+  <section id="intro">
+    <div class="section-title"><span class="num">00</span> Comment ça fonctionne</div>
+
+    <div class="intro-box">
+      <h2>HTML = le contenu. CSS = l'apparence.</h2>
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px;line-height:1.75">
+        Le <strong>HTML</strong> décrit <em>ce qu'il y a</em> sur la page (un titre, un paragraphe, une image).
+        Le <strong>CSS</strong> décrit <em>comment ça se présente</em> (couleur, taille, position).
+        Le CSS cible les éléments HTML grâce à leurs <strong>classes</strong>.
+      </p>
+      <div class="intro-schema">
+        <div class="intro-html">
+          <span class="code-label label-html">fichier HTML</span>
+          <span style="color:#f38ba8">&lt;p</span> <span style="color:#89b4fa">class=</span><span style="color:#f9e2af">"mon-texte"</span><span style="color:#f38ba8">&gt;</span><span style="color:#e8e8f0">Bonjour !</span><span style="color:#f38ba8">&lt;/p&gt;</span>
+        </div>
+        <div class="intro-css">
+          <span class="code-label label-css">fichier CSS</span>
+          <span style="color:#f38ba8">.mon-texte</span> <span style="color:#e2dff7">{</span><br>
+          &nbsp;&nbsp;<span style="color:#89dceb">color</span>: <span style="color:#a6e3a1">red</span>;<br>
+          <span style="color:#e2dff7">}</span>
+        </div>
+      </div>
+      <p class="intro-note">
+        <strong>Balise</strong> = <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;p&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;h1&gt;</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">&lt;div&gt;</code>… les briques du HTML.<br>
+        <strong>Classe</strong> = un nom qu'on invente (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">class="mon-texte"</code>). En CSS, on la cible avec un point : <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.mon-texte { … }</code><br>
+        <strong>Propriété</strong> = ce qu'on change (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">color</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">font-size</code>…). <strong>Valeur</strong> = ce qu'on lui donne (<code style="font-family:'JetBrains Mono',monospace;font-size:12px">red</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:12px">16px</code>…).
+      </p>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════
+       01  TYPOGRAPHIE
+  ════════════════════════════════════ -->
+  <section id="typo">
+    <div class="section-title"><span class="num">01</span> Typographie</div>
+
+    <!-- color -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">color</code><span class="pd">— Couleur du texte</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <p class="rouge">Texte rouge</p>
+          <p class="bleu">Texte bleu</p>
+          <p class="vert">Texte vert</p>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"rouge"</span><span class="t">&gt;</span>Texte rouge<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"bleu"</span><span class="t">&gt;</span>Texte bleu<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"vert"</span><span class="t">&gt;</span>Texte vert<span class="t">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- &lt;p&gt; = paragraphe --&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.rouge</span> { <span class="pr">color</span>: <span class="vl">#e63946</span>; }
+<span class="sl">.bleu</span>  { <span class="pr">color</span>: <span class="vl">#3b82f6</span>; }
+<span class="sl">.vert</span>  { <span class="pr">color</span>: <span class="vl">#22c55e</span>; }
+
+<span class="cm">/* formats de couleur acceptés :
+   #e63946   → hexadécimal
+   rgb(230, 57, 70) → rgb
+   red       → nom anglais */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- font-size -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">font-size</code><span class="pd">— Taille du texte</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <p class="petit">12px — note de bas de page</p>
+          <p class="corps">16px — corps courant</p>
+          <p class="sous-titre">24px — sous-titre</p>
+          <p class="grand-titre">40px titre</p>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"petit"</span><span class="t">&gt;</span>Note de bas de page<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"corps"</span><span class="t">&gt;</span>Corps courant<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;h2</span> <span class="a">class=</span><span class="s">"sous-titre"</span><span class="t">&gt;</span>Sous-titre<span class="t">&lt;/h2&gt;</span>
+<span class="t">&lt;h1</span> <span class="a">class=</span><span class="s">"grand-titre"</span><span class="t">&gt;</span>Titre<span class="t">&lt;/h1&gt;</span>
+
+<span class="cm">&lt;!-- h1 à h6 = niveaux de titre --&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.petit</span>       { <span class="pr">font-size</span>: <span class="vl">12px</span>; }
+<span class="sl">.corps</span>       { <span class="pr">font-size</span>: <span class="vl">16px</span>; }
+<span class="sl">.sous-titre</span>  { <span class="pr">font-size</span>: <span class="vl">24px</span>; }
+<span class="sl">.grand-titre</span> {
+  <span class="pr">font-size</span>: <span class="vl">40px</span>;
+  <span class="pr">font-weight</span>: <span class="vl">800</span>;
+  <span class="pr">line-height</span>: <span class="vl">1</span>;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- font-weight -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">font-weight</code><span class="pd">— Épaisseur du tracé</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <p class="fin">300 — fin (Light)</p>
+          <p class="normal-w">400 — normal</p>
+          <p class="semi-gras">600 — semi-gras</p>
+          <p class="gras">800 — très gras</p>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"fin"</span><span class="t">&gt;</span>300 — fin<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"normal-w"</span><span class="t">&gt;</span>400 — normal<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"semi-gras"</span><span class="t">&gt;</span>600 — semi-gras<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"gras"</span><span class="t">&gt;</span>800 — très gras<span class="t">&lt;/p&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.fin</span>       { <span class="pr">font-weight</span>: <span class="vl">300</span>; }
+<span class="sl">.normal-w</span>  { <span class="pr">font-weight</span>: <span class="vl">400</span>; }
+<span class="sl">.semi-gras</span> { <span class="pr">font-weight</span>: <span class="vl">600</span>; }
+<span class="sl">.gras</span>      { <span class="pr">font-weight</span>: <span class="vl">800</span>; }
+
+<span class="cm">/* La police doit proposer
+   la graisse demandée.
+   bold = 700, normal = 400. */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- font-family -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">font-family</code><span class="pd">— Police de caractères</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-col">
+            <div class="lbl">police-sans</div>
+            <p class="police-sans">Le vif renard brun saute</p>
+          </div>
+          <div class="demo-col">
+            <div class="lbl">police-serif</div>
+            <p class="police-serif">Le vif renard brun saute</p>
+          </div>
+          <div class="demo-col">
+            <div class="lbl">police-mono</div>
+            <p class="police-mono">Le vif renard brun saute</p>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"police-sans"</span><span class="t">&gt;</span>
+  Le vif renard…
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"police-serif"</span><span class="t">&gt;</span>
+  Le vif renard…
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"police-mono"</span><span class="t">&gt;</span>
+  Le vif renard…
+<span class="t">&lt;/p&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.police-sans</span> {
+  <span class="pr">font-family</span>: <span class="vl">Arial, sans-serif</span>;
+}
+<span class="sl">.police-serif</span> {
+  <span class="pr">font-family</span>: <span class="vl">Georgia, serif</span>;
+}
+<span class="sl">.police-mono</span> {
+  <span class="pr">font-family</span>: <span class="vl">'Courier New', monospace</span>;
+}
+<span class="cm">/* Le 2ᵉ terme = police de secours
+   si la 1ère est introuvable */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- text-align -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">text-align</code><span class="pd">— Alignement horizontal</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <p class="aligne-gauche">Aligné à gauche</p>
+          <p class="aligne-centre">Centré</p>
+          <p class="aligne-droite">Aligné à droite</p>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"aligne-gauche"</span><span class="t">&gt;</span>
+  Aligné à gauche
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"aligne-centre"</span><span class="t">&gt;</span>
+  Centré
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"aligne-droite"</span><span class="t">&gt;</span>
+  Aligné à droite
+<span class="t">&lt;/p&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.aligne-gauche</span> {
+  <span class="pr">text-align</span>: <span class="vl">left</span>;
+}
+<span class="sl">.aligne-centre</span> {
+  <span class="pr">text-align</span>: <span class="vl">center</span>;
+}
+<span class="sl">.aligne-droite</span> {
+  <span class="pr">text-align</span>: <span class="vl">right</span>;
+}
+<span class="cm">/* left est le défaut.
+   justify = texte justifié
+   comme dans un journal. */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- line-height -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">line-height</code><span class="pd">— Interlignage</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row" style="align-items:flex-start;">
+            <div class="demo-col">
+              <div class="lbl">interligne-serre</div>
+              <p class="interligne-serre">Première ligne. Deuxième ligne. Troisième ligne.</p>
+            </div>
+            <div class="demo-col">
+              <div class="lbl">interligne-normal</div>
+              <p class="interligne-normal">Première ligne. Deuxième ligne. Troisième ligne.</p>
+            </div>
+            <div class="demo-col">
+              <div class="lbl">interligne-large</div>
+              <p class="interligne-large">Première ligne. Deuxième ligne.</p>
+            </div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"interligne-serre"</span><span class="t">&gt;</span>
+  Première ligne…
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"interligne-normal"</span><span class="t">&gt;</span>
+  Première ligne…
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"interligne-large"</span><span class="t">&gt;</span>
+  Première ligne…
+<span class="t">&lt;/p&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.interligne-serre</span>  {
+  <span class="pr">line-height</span>: <span class="vl">1.1</span>;
+}
+<span class="sl">.interligne-normal</span> {
+  <span class="pr">line-height</span>: <span class="vl">1.6</span>;
+}
+<span class="sl">.interligne-large</span>  {
+  <span class="pr">line-height</span>: <span class="vl">2.2</span>;
+}
+<span class="cm">/* Sans unité = multiple de
+   font-size. 1.6 est le standard
+   pour un texte confortable. */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- letter-spacing -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">letter-spacing</code><span class="pd">— Espace entre les lettres (tracking)</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <p class="tracking-serre">Texte serré −0.03em</p>
+          <p style="font-size:15px;">Texte normal 0</p>
+          <p class="tracking-large">Texte aéré 0.12em</p>
+          <p class="tracking-caps">Titre en majuscules</p>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"tracking-serre"</span><span class="t">&gt;</span>
+  Texte serré
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"tracking-large"</span><span class="t">&gt;</span>
+  Texte aéré
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"tracking-caps"</span><span class="t">&gt;</span>
+  Titre en majuscules
+<span class="t">&lt;/p&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.tracking-serre</span> {
+  <span class="pr">letter-spacing</span>: <span class="vl">-0.03em</span>;
+}
+<span class="sl">.tracking-large</span> {
+  <span class="pr">letter-spacing</span>: <span class="vl">0.12em</span>;
+}
+<span class="sl">.tracking-caps</span> {
+  <span class="pr">letter-spacing</span>: <span class="vl">0.25em</span>;
+  <span class="pr">text-transform</span>: <span class="vl">uppercase</span>;
+  <span class="pr">font-weight</span>: <span class="vl">600</span>;
+}
+<span class="cm">/* em = relatif à font-size */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- text-decoration -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">text-decoration</code><span class="pd">— Soulignement, texte barré</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <p class="souligne">Texte souligné</p>
+          <p class="barre">Texte barré (prix)</p>
+          <a class="lien-propre" href="#">Lien sans soulignement</a>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"souligne"</span><span class="t">&gt;</span>
+  Texte souligné
+<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class=</span><span class="s">"barre"</span><span class="t">&gt;</span>
+  Texte barré
+<span class="t">&lt;/p&gt;</span>
+<span class="cm">&lt;!-- &lt;a&gt; = lien, souligné par défaut --&gt;</span>
+<span class="t">&lt;a</span> <span class="a">class=</span><span class="s">"lien-propre"</span> <span class="a">href=</span><span class="s">"#"</span><span class="t">&gt;</span>
+  Lien propre
+<span class="t">&lt;/a&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.souligne</span> {
+  <span class="pr">text-decoration</span>: <span class="vl">underline</span>;
+}
+<span class="sl">.barre</span> {
+  <span class="pr">text-decoration</span>: <span class="vl">line-through</span>;
+}
+<span class="sl">.lien-propre</span> {
+  <span class="pr">text-decoration</span>: <span class="vl">none</span>;
+}
+<span class="cm">/* none = enlève le soulignement
+   Très utile pour les &lt;a&gt;
+   dans les menus de navigation */</span></code></pre>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ════════════════════════════════
+       02  BOX MODEL
+  ════════════════════════════════════ -->
+  <section id="boxmodel">
+    <div class="section-title"><span class="num">02</span> Box Model — La boîte</div>
+    <p class="section-intro">Chaque élément HTML est une boîte rectangulaire à 4 couches : contenu → padding → border → margin.</p>
+
+    <!-- schéma -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">margin · border · padding</code><span class="pd">— Les 4 couches de chaque élément</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="align-items:center;">
+          <div class="bm">
+            <span class="bm-tag">margin — espace EXTÉRIEUR</span>
+            <div class="bm-b">
+              <div class="bm-p">
+                <span class="bm-tag">padding — espace INTÉRIEUR</span>
+                <div class="bm-c">contenu</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"carte"</span><span class="t">&gt;</span>
+  Contenu de la carte
+<span class="t">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- &lt;div&gt; = boîte générique,
+     la balise la plus utilisée
+     pour structurer une page --&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.carte</span> {
+  <span class="pr">border</span>: <span class="vl">2px solid #1a1714</span>;
+  <span class="cm">/* bordure visible */</span>
+
+  <span class="pr">padding</span>: <span class="vl">16px</span>;
+  <span class="cm">/* espace entre bord et contenu
+     — espace INTÉRIEUR */</span>
+
+  <span class="pr">margin</span>: <span class="vl">16px</span>;
+  <span class="cm">/* repousse les voisins
+     — espace EXTÉRIEUR */</span>
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- carte démo -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">padding</code><span class="pd">&amp;</span><code class="pn">margin</code><span class="pd">— Raccourcis et centrage</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="gap:16px;">
+          <div class="demo-col">
+            <div class="lbl">carte avec padding: 16px</div>
+            <div class="carte">Contenu</div>
+          </div>
+          <div class="demo-col">
+            <div class="lbl">btn-pad avec padding: 8px 24px</div>
+            <div class="btn-pad">Bouton</div>
+          </div>
+          <div class="demo-col">
+            <div class="lbl">centree avec margin: 0 auto</div>
+            <div class="centree">centré</div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"carte"</span><span class="t">&gt;</span>Contenu<span class="t">&lt;/div&gt;</span>
+
+<span class="t">&lt;button</span> <span class="a">class=</span><span class="s">"btn-pad"</span><span class="t">&gt;</span>Bouton<span class="t">&lt;/button&gt;</span>
+
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"centree"</span><span class="t">&gt;</span>centré<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.carte</span>   { <span class="pr">padding</span>: <span class="vl">16px</span>; }
+
+<span class="cm">/* 2 valeurs : haut/bas | gauche/droite */</span>
+<span class="sl">.btn-pad</span> { <span class="pr">padding</span>: <span class="vl">8px 24px</span>; }
+
+<span class="cm">/* margin: 0 auto = centrage horizontal */</span>
+<span class="sl">.centree</span> {
+  <span class="pr">width</span>: <span class="vl">140px</span>;
+  <span class="pr">margin</span>: <span class="vl">0 auto</span>;
+}
+
+<span class="cm">/* côtés séparés */</span>
+<span class="pr">margin-top</span>: <span class="vl">32px</span>;
+<span class="pr">padding-left</span>: <span class="vl">16px</span>;</code></pre>
+      </div>
+    </div>
+
+    <!-- width -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">width</code><span class="pd">— Largeur d'un élément</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="gap:12px;">
+          <div class="demo-col">
+            <div class="lbl">largeur-fixe</div>
+            <div class="largeur-fixe"></div>
+          </div>
+          <div class="demo-col">
+            <div class="lbl">largeur-moitie</div>
+            <div class="largeur-moitie"></div>
+          </div>
+          <div class="demo-col">
+            <div class="lbl">largeur-pleine</div>
+            <div class="largeur-pleine"></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"largeur-fixe"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"largeur-moitie"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"largeur-pleine"</span><span class="t">&gt;&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.largeur-fixe</span>   { <span class="pr">width</span>: <span class="vl">80px</span>; }
+<span class="sl">.largeur-moitie</span> { <span class="pr">width</span>: <span class="vl">50%</span>; }
+<span class="sl">.largeur-pleine</span> { <span class="pr">width</span>: <span class="vl">100%</span>; }
+
+<span class="cm">/* limiter la largeur maximum */</span>
+<span class="pr">max-width</span>: <span class="vl">800px</span>;
+
+<span class="cm">/* height = même logique
+   Par défaut height: auto
+   = s'adapte au contenu */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- border -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">border</code><span class="pd">— Bordure : épaisseur, style, couleur</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row">
+            <span class="bord-solid">solid</span>
+            <span class="bord-tirets">dashed</span>
+            <span class="bord-points">dotted</span>
+            <span class="bord-dessous">dessous seulement</span>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"bord-solid"</span><span class="t">&gt;</span>solid<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"bord-tirets"</span><span class="t">&gt;</span>dashed<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"bord-points"</span><span class="t">&gt;</span>dotted<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;h2</span> <span class="a">class=</span><span class="s">"bord-dessous"</span><span class="t">&gt;</span>
+  Titre souligné
+<span class="t">&lt;/h2&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="cm">/* épaisseur   style    couleur */</span>
+<span class="sl">.bord-solid</span>  {
+  <span class="pr">border</span>: <span class="vl">2px solid #1a1a1a</span>;
+}
+<span class="sl">.bord-tirets</span> {
+  <span class="pr">border</span>: <span class="vl">2px dashed #3b82f6</span>;
+}
+<span class="sl">.bord-points</span> {
+  <span class="pr">border</span>: <span class="vl">2px dotted #e91e63</span>;
+}
+<span class="sl">.bord-dessous</span> {
+  <span class="pr">border-bottom</span>: <span class="vl">3px solid #c95c22</span>;
+}
+<span class="cm">/* border: none; → supprimer */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- border-radius -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">border-radius</code><span class="pd">— Coins arrondis</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row" style="align-items:flex-end;">
+            <div class="demo-col"><div class="lbl">coins-carres</div><div class="coins-carres"></div></div>
+            <div class="demo-col"><div class="lbl">coins-ronds</div><div class="coins-ronds"></div></div>
+            <div class="demo-col"><div class="lbl">cercle</div><div class="cercle"></div></div>
+            <div class="demo-col"><div class="lbl">pilule</div><div class="pilule"></div></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"coins-carres"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"coins-ronds"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"cercle"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;button</span> <span class="a">class=</span><span class="s">"pilule"</span><span class="t">&gt;&lt;/button&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.coins-carres</span> {
+  <span class="pr">border-radius</span>: <span class="vl">0</span>;
+}
+<span class="sl">.coins-ronds</span> {
+  <span class="pr">border-radius</span>: <span class="vl">14px</span>;
+}
+<span class="sl">.cercle</span> {
+  <span class="pr">width</span>: <span class="vl">56px</span>; <span class="pr">height</span>: <span class="vl">56px</span>;
+  <span class="pr">border-radius</span>: <span class="vl">50%</span>;
+  <span class="cm">/* width = height pour un cercle */</span>
+}
+<span class="sl">.pilule</span> {
+  <span class="pr">border-radius</span>: <span class="vl">999px</span>;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- box-sizing -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">box-sizing: border-box</code><span class="pd">— À mettre en haut de tout projet</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="flex-direction:row;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+          <div class="demo-col">
+            <div class="lbl" style="color:#e91e63">piege — content-box (défaut)</div>
+            <div class="piege">width: 130px<br>+ border 16px<br>+ padding 20px<br><strong>= 166px réels 😬</strong></div>
+          </div>
+          <div class="demo-col">
+            <div class="lbl" style="color:#22c55e">correct — border-box ✓</div>
+            <div class="correct">width: 130px<br>tout compris<br><br><strong>= 130px. Point.</strong></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="cm">&lt;!-- Ce code va dans le CSS,
+     tout en haut, pour s'appliquer
+     à l'ensemble du projet. --&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="cm">/* À COLLER EN HAUT DE CHAQUE PROJET */</span>
+<span class="sl">*</span>, <span class="sl">*::before</span>, <span class="sl">*::after</span> {
+  <span class="pr">box-sizing</span>: <span class="vl">border-box</span>;
+}
+
+<span class="cm">/* L'étoile * cible TOUS les éléments.
+   Avec border-box : width inclut
+   déjà le padding et la border.
+   Sans ça, les tailles deviennent
+   impossibles à calculer. */</span></code></pre>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ════════════════════════════════
+       03  FONDS
+  ════════════════════════════════════ -->
+  <section id="bg">
+    <div class="section-title"><span class="num">03</span> Fonds &amp; Couleurs de fond</div>
+
+    <!-- background-color -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">background-color</code><span class="pd">— Couleur de fond</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row">
+            <div class="demo-col"><div class="lbl">fond-bleu</div><div class="fond-bleu"></div></div>
+            <div class="demo-col"><div class="lbl">fond-rose</div><div class="fond-rose"></div></div>
+            <div class="demo-col"><div class="lbl">fond-semi</div><div class="fond-semi"></div></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"fond-bleu"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"fond-rose"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"fond-semi"</span><span class="t">&gt;&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.fond-bleu</span> {
+  <span class="pr">background-color</span>: <span class="vl">#3b82f6</span>;
+}
+<span class="sl">.fond-rose</span> {
+  <span class="pr">background-color</span>: <span class="vl">#e91e63</span>;
+}
+<span class="cm">/* rgba : rouge vert bleu + alpha
+   alpha : 0 (invisible) → 1 (plein) */</span>
+<span class="sl">.fond-semi</span> {
+  <span class="pr">background-color</span>: <span class="vl">rgba(59, 130, 246, 0.2)</span>;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- gradient -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">background</code><span class="pd">— Dégradés</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row">
+            <div class="demo-col"><div class="lbl">degrade-1</div><div class="degrade-1"></div></div>
+            <div class="demo-col"><div class="lbl">degrade-2</div><div class="degrade-2"></div></div>
+            <div class="demo-col"><div class="lbl">degrade-3</div><div class="degrade-3"></div></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"degrade-1"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"degrade-2"</span><span class="t">&gt;&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"degrade-3"</span><span class="t">&gt;&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="cm">/* linéaire : direction, départ, arrivée */</span>
+<span class="sl">.degrade-1</span> {
+  <span class="pr">background</span>: <span class="vl">linear-gradient(
+    to right, #3b82f6, #e91e63
+  )</span>;
+}
+<span class="sl">.degrade-2</span> {
+  <span class="pr">background</span>: <span class="vl">linear-gradient(
+    135deg, #f9e2af, #c95c22
+  )</span>;
+}
+<span class="cm">/* radial : du centre vers l'extérieur */</span>
+<span class="sl">.degrade-3</span> {
+  <span class="pr">background</span>: <span class="vl">radial-gradient(
+    circle, #93c5fd, #1e3a8a
+  )</span>;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- background-image -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">background-image</code><span class="pd">&amp;</span><code class="pn">background-size</code><span class="pd">&amp;</span><code class="pn">background-position</code></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="gap:10px;">
+          <div class="lbl">hero — image en arrière-plan</div>
+          <div class="hero-fallback">background: linear-gradient(…)</div>
+          <div style="font-size:12px;color:var(--muted);">Remplacer par url('photo.jpg') pour une vraie image</div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"hero"</span><span class="t">&gt;</span>
+  Texte par-dessus l'image
+<span class="t">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- Ou une vraie balise image --&gt;</span>
+<span class="t">&lt;img</span>
+  <span class="a">src=</span><span class="s">"photo.jpg"</span>
+  <span class="a">alt=</span><span class="s">"Description"</span>
+<span class="t">/&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.hero</span> {
+  <span class="pr">background-image</span>: <span class="vl">url('photo.jpg')</span>;
+
+  <span class="pr">background-size</span>: <span class="vl">cover</span>;
+  <span class="cm">/* cover = remplit sans déformer
+     contain = tout visible
+     100% = étire (souvent moche) */</span>
+
+  <span class="pr">background-position</span>: <span class="vl">center</span>;
+  <span class="cm">/* center / top / bottom
+     left / right / top left… */</span>
+
+  <span class="pr">background-repeat</span>: <span class="vl">no-repeat</span>;
+  <span class="cm">/* désactive la répétition */</span>
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- opacity -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">opacity</code><span class="pd">— Transparence (0 = invisible, 1 = plein)</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row">
+            <div class="demo-col"><div class="lbl">opaque</div><div class="opaque">1.0</div></div>
+            <div class="demo-col"><div class="lbl">mi-opaque</div><div class="mi-opaque">0.5</div></div>
+            <div class="demo-col"><div class="lbl">peu-opaque</div><div class="peu-opaque">0.2</div></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"opaque"</span><span class="t">&gt;</span>1.0<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"mi-opaque"</span><span class="t">&gt;</span>0.5<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"peu-opaque"</span><span class="t">&gt;</span>0.2<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.opaque</span>    { <span class="pr">opacity</span>: <span class="vl">1</span>;   }
+<span class="sl">.mi-opaque</span> { <span class="pr">opacity</span>: <span class="vl">0.5</span>; }
+<span class="sl">.peu-opaque</span>{ <span class="pr">opacity</span>: <span class="vl">0.2</span>; }
+
+<span class="cm">/* Attention : opacity rend transparent
+   TOUT l'élément — texte inclus.
+   Pour juste le fond :
+   background: rgba(0,0,0, 0.5)
+   
+   opacity: 0 = invisible MAIS
+   occupe toujours de la place */</span></code></pre>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ════════════════════════════════
+       04  DISPLAY
+  ════════════════════════════════════ -->
+  <section id="display">
+    <div class="section-title"><span class="num">04</span> Display — Comportement dans la page</div>
+
+    <div class="prop">
+      <div class="prop-header"><code class="pn">display</code><span class="pd">— Comment un élément occupe l'espace</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="gap:16px;">
+          <div>
+            <div class="lbl">block — prend toute la largeur, empilé</div>
+            <div class="el-block">div.el-block (A)</div>
+            <div class="el-block">div.el-block (B)</div>
+          </div>
+          <div>
+            <div class="lbl">inline — coule dans le texte</div>
+            <p style="font-size:13px;">Du texte <span class="el-inline">span.el-inline</span> qui continue sur la même ligne.</p>
+          </div>
+          <div>
+            <div class="lbl">inline-block — côte à côte, accepte width et padding</div>
+            <span class="el-inline-block">A</span>
+            <span class="el-inline-block">B</span>
+            <span class="el-inline-block">C</span>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="cm">&lt;!-- block : &lt;div&gt; &lt;p&gt; &lt;h1&gt;… --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"el-block"</span><span class="t">&gt;</span>A<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"el-block"</span><span class="t">&gt;</span>B<span class="t">&lt;/div&gt;</span>
+
+<span class="cm">&lt;!-- inline : &lt;span&gt; &lt;a&gt;… --&gt;</span>
+<span class="t">&lt;p&gt;</span>Texte <span class="t">&lt;span</span> <span class="a">class=</span><span class="s">"el-inline"</span><span class="t">&gt;</span>
+  span
+<span class="t">&lt;/span&gt;</span> continu.<span class="t">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- inline-block : côte à côte --&gt;</span>
+<span class="t">&lt;span</span> <span class="a">class=</span><span class="s">"el-inline-block"</span><span class="t">&gt;</span>A<span class="t">&lt;/span&gt;</span>
+<span class="t">&lt;span</span> <span class="a">class=</span><span class="s">"el-inline-block"</span><span class="t">&gt;</span>B<span class="t">&lt;/span&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.el-block</span> {
+  <span class="pr">display</span>: <span class="vl">block</span>;
+  <span class="cm">/* défaut pour div, p, h1… */</span>
+}
+<span class="sl">.el-inline</span> {
+  <span class="pr">display</span>: <span class="vl">inline</span>;
+  <span class="cm">/* défaut pour span, a, strong… */</span>
+}
+<span class="sl">.el-inline-block</span> {
+  <span class="pr">display</span>: <span class="vl">inline-block</span>;
+  <span class="cm">/* côte à côte + accepte
+     width, height, padding */</span>
+}
+<span class="cm">/* display: none → invisible
+   ET retiré de la page */</span></code></pre>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ════════════════════════════════
+       05  POSITION
+  ════════════════════════════════════ -->
+  <section id="position">
+    <div class="section-title"><span class="num">05</span> Position</div>
+
+    <div class="prop">
+      <div class="prop-header"><code class="pn">position: relative</code><span class="pd">&amp;</span><code class="pn">position: absolute</code></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="lbl">parent-relatif (le conteneur)</div>
+          <div class="parent-relatif">
+            <span class="enfant-relatif">relative top:8px left:8px</span>
+            <span class="enfant-absolu">absolute bottom:10px right:10px</span>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"parent-relatif"</span><span class="t">&gt;</span>
+
+  <span class="t">&lt;span</span> <span class="a">class=</span><span class="s">"enfant-relatif"</span><span class="t">&gt;</span>
+    relative
+  <span class="t">&lt;/span&gt;</span>
+
+  <span class="t">&lt;span</span> <span class="a">class=</span><span class="s">"enfant-absolu"</span><span class="t">&gt;</span>
+    absolute
+  <span class="t">&lt;/span&gt;</span>
+
+<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.parent-relatif</span> {
+  <span class="pr">position</span>: <span class="vl">relative</span>;
+  <span class="cm">/* référence pour les absolute */</span>
+}
+<span class="sl">.enfant-relatif</span> {
+  <span class="pr">position</span>: <span class="vl">relative</span>;
+  <span class="pr">top</span>: <span class="vl">8px</span>;
+  <span class="pr">left</span>: <span class="vl">8px</span>;
+  <span class="cm">/* décalé depuis sa position */</span>
+}
+<span class="sl">.enfant-absolu</span> {
+  <span class="pr">position</span>: <span class="vl">absolute</span>;
+  <span class="pr">bottom</span>: <span class="vl">10px</span>;
+  <span class="pr">right</span>: <span class="vl">10px</span>;
+  <span class="cm">/* collé en bas à droite
+     du parent-relatif */</span>
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="prop">
+      <div class="prop-header"><code class="pn">position: fixed</code><span class="pd">&amp;</span><code class="pn">position: sticky</code></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="gap:12px;">
+          <div style="background:#fef9c3;border:1px solid #eab308;border-radius:8px;padding:10px 14px;font-size:13px;color:#713f12;"><strong>fixed</strong> — collé à l'écran, ne bouge pas quand on fait défiler la page. Idéal pour une barre de navigation.</div>
+          <div style="background:#f0fdf4;border:1px solid #22c55e;border-radius:8px;padding:10px 14px;font-size:13px;color:#166534;"><strong>sticky</strong> — suit le défilement normalement, puis reste visible dès qu'il atteint le bord. Utilisé pour les titres de section.</div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;nav</span> <span class="a">class=</span><span class="s">"barre-nav"</span><span class="t">&gt;</span>
+  Menu
+<span class="t">&lt;/nav&gt;</span>
+
+<span class="t">&lt;h2</span> <span class="a">class=</span><span class="s">"titre-collant"</span><span class="t">&gt;</span>
+  Titre
+<span class="t">&lt;/h2&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.barre-nav</span> {
+  <span class="pr">position</span>: <span class="vl">fixed</span>;
+  <span class="pr">top</span>: <span class="vl">0</span>; <span class="pr">left</span>: <span class="vl">0</span>;
+  <span class="pr">width</span>: <span class="vl">100%</span>;
+  <span class="cm">/* reste en haut même si
+     on scrolle */</span>
+}
+<span class="sl">.titre-collant</span> {
+  <span class="pr">position</span>: <span class="vl">sticky</span>;
+  <span class="pr">top</span>: <span class="vl">0</span>;
+  <span class="cm">/* colle au bord quand
+     il l'atteint au scroll */</span>
+}
+<span class="cm">/* z-index : qui est devant */</span>
+<span class="pr">z-index</span>: <span class="vl">100</span>;</code></pre>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ════════════════════════════════
+       06  FLEXBOX
+  ════════════════════════════════════ -->
+  <section id="flexbox">
+    <div class="section-title"><span class="num">06</span> Flexbox</div>
+    <p class="section-intro">Flexbox s'active sur le <strong>parent</strong> (le conteneur). Il organise automatiquement tous ses <strong>enfants directs</strong>.</p>
+
+    <!-- display: flex -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">display: flex</code><span class="pd">— Active flexbox sur le conteneur</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="flex-direction:row;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+          <div class="demo-col">
+            <div class="lbl">sans flex (empilés par défaut)</div>
+            <div style="background:var(--surface);border:1px dashed var(--border-c);border-radius:8px;padding:10px;width:110px;">
+              <div style="background:#3b82f6;color:white;padding:6px;margin-bottom:4px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace;">A</div>
+              <div style="background:#e91e63;color:white;padding:6px;margin-bottom:4px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace;">B</div>
+              <div style="background:#22c55e;color:white;padding:6px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace;">C</div>
+            </div>
+          </div>
+          <div class="demo-col">
+            <div class="lbl">conteneur-flex (côte à côte)</div>
+            <div class="conteneur-flex">
+              <div class="enfant-a">A</div>
+              <div class="enfant-b">B</div>
+              <div class="enfant-c">C</div>
+            </div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="cm">&lt;!-- Le parent = conteneur --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"conteneur-flex"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"enfant-a"</span><span class="t">&gt;</span>A<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"enfant-b"</span><span class="t">&gt;</span>B<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"enfant-c"</span><span class="t">&gt;</span>C<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="cm">/* Sur le PARENT */</span>
+<span class="sl">.conteneur-flex</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">gap</span>: <span class="vl">8px</span>;
+}
+
+<span class="cm">/* Les ENFANTS */</span>
+<span class="sl">.enfant-a</span> { <span class="pr">background</span>: <span class="vl">#3b82f6</span>; }
+<span class="sl">.enfant-b</span> { <span class="pr">background</span>: <span class="vl">#e91e63</span>; }
+<span class="sl">.enfant-c</span> { <span class="pr">background</span>: <span class="vl">#22c55e</span>; }</code></pre>
+      </div>
+    </div>
+
+    <!-- justify-content -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">justify-content</code><span class="pd">— Distribution horizontale des enfants</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="gap:8px;">
+          <div class="demo-col"><div class="lbl">jc-debut</div>
+            <div class="jc-debut"><div class="fi">A</div><div class="fi">B</div><div class="fi">C</div></div>
+          </div>
+          <div class="demo-col"><div class="lbl">jc-milieu</div>
+            <div class="jc-milieu"><div class="fi">A</div><div class="fi">B</div><div class="fi">C</div></div>
+          </div>
+          <div class="demo-col"><div class="lbl">jc-fin</div>
+            <div class="jc-fin"><div class="fi">A</div><div class="fi">B</div><div class="fi">C</div></div>
+          </div>
+          <div class="demo-col"><div class="lbl">jc-entre</div>
+            <div class="jc-entre"><div class="fi">A</div><div class="fi">B</div><div class="fi">C</div></div>
+          </div>
+          <div class="demo-col"><div class="lbl">jc-egal</div>
+            <div class="jc-egal"><div class="fi">A</div><div class="fi">B</div><div class="fi">C</div></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"jc-debut"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div&gt;</span>A<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>B<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>C<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="cm">&lt;!-- Même structure HTML pour
+     jc-milieu, jc-fin,
+     jc-entre et jc-egal --&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.jc-debut</span>  { <span class="pr">display</span>: <span class="vl">flex</span>; <span class="pr">justify-content</span>: <span class="vl">flex-start</span>; }
+<span class="sl">.jc-milieu</span> { <span class="pr">display</span>: <span class="vl">flex</span>; <span class="pr">justify-content</span>: <span class="vl">center</span>; }
+<span class="sl">.jc-fin</span>    { <span class="pr">display</span>: <span class="vl">flex</span>; <span class="pr">justify-content</span>: <span class="vl">flex-end</span>; }
+<span class="sl">.jc-entre</span>  { <span class="pr">display</span>: <span class="vl">flex</span>; <span class="pr">justify-content</span>: <span class="vl">space-between</span>; }
+<span class="sl">.jc-egal</span>   { <span class="pr">display</span>: <span class="vl">flex</span>; <span class="pr">justify-content</span>: <span class="vl">space-evenly</span>; }
+</code></pre>
+      </div>
+    </div>
+
+    <!-- align-items -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">align-items</code><span class="pd">— Alignement vertical des enfants</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row" style="align-items:flex-start;">
+            <div class="demo-col"><div class="lbl">ai-haut</div>
+              <div class="ai-haut"><div class="fi-court">A</div><div class="fi-grand">B</div><div class="fi-court">C</div></div>
+            </div>
+            <div class="demo-col"><div class="lbl">ai-milieu</div>
+              <div class="ai-milieu"><div class="fi-court">A</div><div class="fi-grand">B</div><div class="fi-court">C</div></div>
+            </div>
+            <div class="demo-col"><div class="lbl">ai-bas</div>
+              <div class="ai-bas"><div class="fi-court">A</div><div class="fi-grand">B</div><div class="fi-court">C</div></div>
+            </div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"ai-haut"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"fi-court"</span><span class="t">&gt;</span>A<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"fi-grand"</span><span class="t">&gt;</span>B<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"fi-court"</span><span class="t">&gt;</span>C<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="cm">&lt;!-- Même structure pour
+     ai-milieu et ai-bas --&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.ai-haut</span>   {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">align-items</span>: <span class="vl">flex-start</span>;
+}
+<span class="sl">.ai-milieu</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">align-items</span>: <span class="vl">center</span>;
+}
+<span class="sl">.ai-bas</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">align-items</span>: <span class="vl">flex-end</span>;
+}
+<span class="cm">/* Centrer dans les 2 axes : */</span>
+<span class="pr">display</span>: <span class="vl">flex</span>;
+<span class="pr">justify-content</span>: <span class="vl">center</span>;
+<span class="pr">align-items</span>: <span class="vl">center</span>;</code></pre>
+      </div>
+    </div>
+
+    <!-- gap + flex-wrap -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">gap</code><span class="pd">&amp;</span><code class="pn">flex-wrap</code><span class="pd">— Espacement et retour à la ligne</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="gap:12px;">
+          <div class="demo-col"><div class="lbl">avec-gap (gap: 16px)</div>
+            <div class="avec-gap"><div class="fi">A</div><div class="fi">B</div><div class="fi">C</div><div class="fi">D</div></div>
+          </div>
+          <div class="demo-col"><div class="lbl">avec-wrap (flex-wrap: wrap)</div>
+            <div class="avec-wrap"><div class="fi">Un</div><div class="fi">Deux</div><div class="fi">Trois</div><div class="fi">Quatre</div></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"avec-gap"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div&gt;</span>A<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>B<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>C<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"avec-wrap"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div&gt;</span>Un<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>Deux<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>Trois<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>Quatre<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.avec-gap</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">gap</span>: <span class="vl">16px</span>;
+  <span class="cm">/* espace entre les enfants */</span>
+}
+<span class="sl">.avec-wrap</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">flex-wrap</span>: <span class="vl">wrap</span>;
+  <span class="pr">gap</span>: <span class="vl">8px</span>;
+  <span class="cm">/* wrap = passe à la ligne
+     si pas assez de place.
+     Par défaut : nowrap. */</span>
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- flex: 1 -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">flex: 1</code><span class="pd">— Sur les enfants : comment ils partagent l'espace</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="gap:12px;">
+          <div class="lbl">conteneur-parts (part-2 prend 2×, part-1 prend 1×)</div>
+          <div class="conteneur-parts">
+            <div class="part-2">flex: 2</div>
+            <div class="part-1">flex: 1</div>
+            <div class="part-1">flex: 1</div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"conteneur-parts"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"part-2"</span><span class="t">&gt;</span>flex: 2<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"part-1"</span><span class="t">&gt;</span>flex: 1<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"part-1"</span><span class="t">&gt;</span>flex: 1<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.conteneur-parts</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+}
+<span class="sl">.part-2</span> { <span class="pr">flex</span>: <span class="vl">2</span>; }
+<span class="cm">/* prend 2 parts de l'espace */</span>
+<span class="sl">.part-1</span> { <span class="pr">flex</span>: <span class="vl">1</span>; }
+<span class="cm">/* prend 1 part de l'espace */</span>
+
+<span class="cm">/* Exemple : sidebar + contenu
+   .sidebar { flex: 1; }  → 25%
+   .contenu { flex: 3; }  → 75% */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- flex-direction -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">flex-direction</code><span class="pd">— Horizontal ou vertical</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row" style="align-items:flex-start;">
+            <div class="demo-col"><div class="lbl">flex-rangee (row)</div>
+              <div class="flex-rangee"><div class="fi">A</div><div class="fi">B</div><div class="fi">C</div></div>
+            </div>
+            <div class="demo-col"><div class="lbl">flex-colonne (column)</div>
+              <div class="flex-colonne"><div class="fi">A</div><div class="fi">B</div><div class="fi">C</div></div>
+            </div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"flex-rangee"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div&gt;</span>A<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>B<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>C<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"flex-colonne"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div&gt;</span>A<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>B<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div&gt;</span>C<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.flex-rangee</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">flex-direction</span>: <span class="vl">row</span>;
+  <span class="cm">/* → c'est le défaut */</span>
+}
+<span class="sl">.flex-colonne</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">flex-direction</span>: <span class="vl">column</span>;
+  <span class="cm">/* ↓ les enfants s'empilent */</span>
+}
+<span class="cm">/* row-reverse ← et column-reverse ↑
+   existent aussi */</span></code></pre>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ════════════════════════════════
+       07  EFFETS
+  ════════════════════════════════════ -->
+  <section id="effets">
+    <div class="section-title"><span class="num">07</span> Effets visuels</div>
+
+    <!-- box-shadow -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">box-shadow</code><span class="pd">— Ombre portée</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row">
+            <div class="demo-col"><div class="lbl">ombre-legere</div><div class="ombre-legere">légère</div></div>
+            <div class="demo-col"><div class="lbl">ombre-carte</div><div class="ombre-carte">carte</div></div>
+            <div class="demo-col"><div class="lbl">ombre-coloree</div><div class="ombre-coloree">colorée</div></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"ombre-legere"</span><span class="t">&gt;</span>
+  Contenu
+<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"ombre-carte"</span><span class="t">&gt;</span>
+  Carte
+<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"ombre-coloree"</span><span class="t">&gt;</span>
+  Colorée
+<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="cm">/* décalX décalY flou couleur */</span>
+<span class="sl">.ombre-legere</span> {
+  <span class="pr">box-shadow</span>: <span class="vl">0 1px 4px rgba(0,0,0,.1)</span>;
+}
+<span class="sl">.ombre-carte</span> {
+  <span class="pr">box-shadow</span>: <span class="vl">0 4px 16px rgba(0,0,0,.12)</span>;
+}
+<span class="sl">.ombre-coloree</span> {
+  <span class="pr">box-shadow</span>: <span class="vl">0 4px 20px rgba(59,130,246,.5)</span>;
+}
+<span class="cm">/* inset = ombre vers l'intérieur
+   box-shadow: inset 0 3px 8px rgba(0,0,0,.2) */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- cursor -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">cursor</code><span class="pd">— Forme du curseur (passe la souris dessus)</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row">
+            <span class="curseur-main">pointer</span>
+            <span class="curseur-interdit">not-allowed</span>
+            <span class="curseur-texte">text</span>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;button</span> <span class="a">class=</span><span class="s">"curseur-main"</span><span class="t">&gt;</span>
+  Bouton
+<span class="t">&lt;/button&gt;</span>
+
+<span class="t">&lt;button</span> <span class="a">class=</span><span class="s">"curseur-interdit"</span><span class="t">&gt;</span>
+  Désactivé
+<span class="t">&lt;/button&gt;</span>
+
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"curseur-texte"</span><span class="t">&gt;</span>
+  Zone de saisie
+<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.curseur-main</span> {
+  <span class="pr">cursor</span>: <span class="vl">pointer</span>;
+  <span class="cm">/* main — cliquable
+     Les &lt;a&gt; l'ont par défaut */</span>
+}
+<span class="sl">.curseur-interdit</span> {
+  <span class="pr">cursor</span>: <span class="vl">not-allowed</span>;
+  <span class="cm">/* cercle barré */</span>
+}
+<span class="sl">.curseur-texte</span> {
+  <span class="pr">cursor</span>: <span class="vl">text</span>;
+  <span class="cm">/* I-beam comme dans un éditeur */</span>
+}
+<span class="cm">/* cursor: default → flèche normal
+   cursor: grab    → main ouverte */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- transition -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">transition</code><span class="pd">— Anime les changements CSS (passe la souris sur les boutons)</span></div>
+      <div class="prop-body">
+        <div class="prop-demo" style="flex-direction:row;gap:24px;align-items:flex-end;flex-wrap:wrap;">
+          <div class="demo-col">
+            <div class="lbl">btn-base — changement brutal</div>
+            <button class="btn-base">Passe la souris</button>
+          </div>
+          <div class="demo-col">
+            <div class="lbl">btn-anime — animé en 0.3s</div>
+            <button class="btn-anime">Passe la souris</button>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;button</span> <span class="a">class=</span><span class="s">"btn-base"</span><span class="t">&gt;</span>
+  Sans transition
+<span class="t">&lt;/button&gt;</span>
+
+<span class="t">&lt;button</span> <span class="a">class=</span><span class="s">"btn-anime"</span><span class="t">&gt;</span>
+  Avec transition
+<span class="t">&lt;/button&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.btn-base</span> {
+  <span class="pr">background</span>: <span class="vl">#3b82f6</span>;
+  <span class="cm">/* PAS de transition */</span>
+}
+<span class="sl">.btn-base:hover</span> { <span class="pr">background</span>: <span class="vl">#e91e63</span>; }
+
+<span class="sl">.btn-anime</span> {
+  <span class="pr">background</span>: <span class="vl">#3b82f6</span>;
+  <span class="pr">transition</span>: <span class="vl">background 0.3s ease</span>,
+              <span class="vl">transform  0.3s ease</span>;
+}
+<span class="sl">.btn-anime:hover</span> {
+  <span class="pr">background</span>: <span class="vl">#e91e63</span>;
+  <span class="pr">transform</span>: <span class="vl">scale(1.06)</span>;
+}
+<span class="cm">/* :hover = quand la souris
+   est posée sur l'élément */</span></code></pre>
+      </div>
+    </div>
+
+    <!-- transform -->
+    <div class="prop">
+      <div class="prop-header"><code class="pn">transform</code><span class="pd">— Déplacement, rotation, zoom</span></div>
+      <div class="prop-body">
+        <div class="prop-demo">
+          <div class="demo-row" style="align-items:center;">
+            <div class="demo-col"><div class="lbl">normal</div><div class="boite-base">A</div></div>
+            <div class="demo-col"><div class="lbl">zoom</div><div class="zoom">A</div></div>
+            <div class="demo-col"><div class="lbl">rotation</div><div class="rotation">A</div></div>
+            <div class="demo-col"><div class="lbl">decalage</div><div class="decalage">A</div></div>
+            <div class="demo-col"><div class="lbl">inclinaison</div><div class="inclinaison">A</div></div>
+          </div>
+        </div>
+        <pre class="code-html"><code><span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"boite-base"</span><span class="t">&gt;</span>A<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"zoom"</span><span class="t">&gt;</span>A<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"rotation"</span><span class="t">&gt;</span>A<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"decalage"</span><span class="t">&gt;</span>A<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class=</span><span class="s">"inclinaison"</span><span class="t">&gt;</span>A<span class="t">&lt;/div&gt;</span></code></pre>
+        <pre class="code-css"><code><span class="sl">.zoom</span>        { <span class="pr">transform</span>: <span class="vl">scale(1.4)</span>; }
+<span class="sl">.rotation</span>    { <span class="pr">transform</span>: <span class="vl">rotate(20deg)</span>; }
+<span class="sl">.decalage</span>    { <span class="pr">transform</span>: <span class="vl">translateY(-16px)</span>; }
+<span class="sl">.inclinaison</span> { <span class="pr">transform</span>: <span class="vl">skewX(18deg)</span>; }
+
+<span class="cm">/* combiner : */</span>
+<span class="pr">transform</span>: <span class="vl">scale(1.05) rotate(3deg)</span>;
+
+<span class="cm">/* Astuce : centrage absolu parfait */</span>
+<span class="pr">position</span>: <span class="vl">absolute</span>;
+<span class="pr">top</span>: <span class="vl">50%</span>; <span class="pr">left</span>: <span class="vl">50%</span>;
+<span class="pr">transform</span>: <span class="vl">translate(-50%, -50%)</span>;</code></pre>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+</div>
+
+<script>
+  /* ── Nav scroll highlight ── */
+  const sections = document.querySelectorAll('section[id]');
+  const links    = document.querySelectorAll('nav a[href^="#"]');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const a = document.querySelector(`nav a[href="#${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { threshold: 0.2 });
+  sections.forEach(s => io.observe(s));
+
+
+</script>
+</body>
+</html>
