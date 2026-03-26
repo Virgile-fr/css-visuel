@@ -53,6 +53,7 @@
       font-size: 15px; line-height: 1.6;
       animation: appear .4s;
       transition: background-color .2s ease-in-out, color .2s ease-in-out;
+      padding-bottom: 32px;
     }
     @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
 
@@ -62,6 +63,20 @@
     h1, h2, h3 { font-family: "Krona One", sans-serif; }
 
     .layout { display: flex; min-height: 100vh; }
+
+    /* ── FOOTER ──────────────────────────── */
+    .site-footer {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      padding: 6px 20px;
+      font-size: 11px; line-height: 1.4;
+      color: var(--muted);
+      background: var(--bg);
+      border-top: var(--border);
+    }
+    .site-footer a { color: var(--muted); border-bottom: 1px solid transparent; }
+    .site-footer a:hover { color: var(--text); border-bottom-color: var(--text); }
+    .site-footer .sep { opacity: .3; }
 
     /* ── NAV ─────────────────────────────── */
     nav {
@@ -1778,5 +1793,13 @@
 
 
 </script>
+
+<footer class="site-footer">
+  <span>© 2026 Arlaud Virgile</span>
+  <span class="sep">·</span>
+  <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>
+  <span class="sep">·</span>
+  <a href="https://github.com/virgile-fr/css-visuel" target="_blank" rel="noopener">Contribuer sur GitHub</a>
+</footer>
 </body>
 </html>
